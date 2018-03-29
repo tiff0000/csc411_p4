@@ -335,7 +335,6 @@
 
 		\begin{homeworkProblem}[Part 3b]
 			\noindent \textit{Explain why can we not update weights in the middle of an episode}
-			$\newline$
 			
 			
 		\end{homeworkProblem}
@@ -348,64 +347,27 @@
 	%----------------------------------------------------------------------------------------
 
 	\begin{homeworkProblem}[Part 4]
-
-		\noindent \textit{Train the neural network using gradient descent (without momentum). Plot the learning curves. Display the weights going into each of the output units.}
-
-		$\newline$
-		Optimization procedure:
-
-		We initialized the parameters as follows:
-			\begin{lstlisting}[language=Python, caption=Parameter Initialization]
-		# load weights and biases
-		snapshot = cPickle.load(open("snapshot50.pkl"))
-		W0 = snapshot["W0"] # dimension = (748, 300)
-		b0 = snapshot["b0"].reshape((300, 1))
-		W1 = snapshot["W1"] # dimension = (300, 10)
-		b1 = snapshot["b1"].reshape((10, 1))
-
-		# initiate weights, bias and alpha
-		initial_weight = dot(W0, W1)  # (748, 10)
-		initial_bias = b1  #(10, 1)
-		alpha = 1e-5  # learning rate
-
-		EPS = 1e-10
-		prev_w = initial_weight - 10 * EPS
-		prev_b = initial_bias - 10 * EPS
-		W = initial_weight.copy()
-		b = initial_bias.copy()
-		iteration = 0
-		max_iteration = 4000
-		\end{lstlisting}
-
-		We initialized the weight to be the dot product of W0 and W1.
-		We repeatedly experimented with different alpha values and observe the results. We first set alpha=0.001. The percentage of correctness turned out to be very low (with 25\% of correcteness).  Then we decreased the learning rate to 0.00001. The correctness percentage then improved to 89\%.
-
-		$\newline$
-		Gradient descent procedure:
-
-		\begin{lstlisting}[language=Python, caption=Parameter Initialization]
-		# apply gradient descent
-		while norm(W - prev_w) > EPS and norm(b - prev_b) > EPS and iteration < max_iteration:
-			prev_w = W.copy()
-			prev_b = b.copy()
-			W -= alpha * df_w(train_set.T, W, b, train_label.T)
-			b -= alpha * df_b(train_set.T, W, b, train_label.T)
-			if iteration % 100 == 0:
-				epoch.append(iteration)
-				train_performance.append(performance(train_set.T, W, b, train_label.T))
-				test_performance.append(performance(test_set.T, W, b, test_label.T))
-			iteration += 1
-		\end{lstlisting}
-
-		$\newline$
-		\clearpage
-
-		Learning curve is shown in the figure below:
-		$\newline$
-
-
-
-
+		
+		\begin{homeworkProblem}[Part 4(a)]
+			\begin{lstlisting}[language=Python, caption=modified function]
+			def get_reward(status):
+			"""Returns a numeric given an environment status."""
+			return {
+			Environment.STATUS_VALID_MOVE  : 1, 
+			Environment.STATUS_INVALID_MOVE: -5,
+			Environment.STATUS_WIN         : 10,
+			Environment.STATUS_TIE         : 4,
+			Environment.STATUS_LOSE        : -1
+			}[status]
+			\end{lstlisting}
+		\end{homeworkProblem}
+		
+		\begin{homeworkProblem}[Part 4(b)]
+			\noindent \textit{Explain the choices that you made in 4(a)}
+			
+			
+		\end{homeworkProblem}
+	
 	\end{homeworkProblem}
 	\clearpage
 
@@ -415,38 +377,10 @@
 
 	\begin{homeworkProblem}[Part 5]
 
-		\noindent \textit{Write vectorized code that performs gradient descent with momentum, and use it to train your network. Plot the learning curves}
+		\noindent \textit{}
 
-		Learning curve with momentum:l
+		\begin{lstlisting}[language=Python, caption=]
 
-
-		How new learning curves compare with gradient descent without momentum:
-		Without the momentum, the performance of correct guesses increased slower than if momentum were used. For example, as we can observe in the learning curve, the performance of training set only increased to 92\% after 800 iterations, wheareas with momentum term set to 0.99, the performance correcnesses increased to the same percentage by only using 400 iterations, because it moved faster when gradient consistenly points to one direction.
-
-		$\newline$
-
-		Code added in the gradient descent:
-
-		In the train\_neural\_network method, method signature was modified to take two
-		extra terms: type and momemtum term. The rest of code remains unchanged
-		as in part 4.
-		\clearpage
-
-		\begin{lstlisting}[language=Python, caption= Gradient descent with momentum]
-
-		train_neural_network(image_prefix, type="None", momentum_term=0):
-
-		v_w = 0 # for momentum
-		v_b = 0
-		if type == "momentum":
-		    v_w = momentum_term * v_w + alpha * df_w(train_set.T, W, b, train_label.T)
-		    W -= v_w
-		    v_b = momentum_term * v_b + alpha * df_b(train_set.T, W, b, train_label.T)
-		    b -= v_b
-
-		if __name__ == "__main__":
-			momentum_term = 0.99
-			train_neural_network("part5", "momentum", momentum_term)
 		\end{lstlisting}
 
 
