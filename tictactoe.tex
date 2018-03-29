@@ -1,0 +1,506 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Programming/Coding Assignment
+% LaTeX Template
+%
+% This template has been downloaded from:
+% http://www.latextemplates.com
+%
+% Original author:
+% Ted Pavlic (http://www.tedpavlic.com)
+%
+% Note:
+% The \lipsum[#] commands throughout this template generate dummy text
+% to fill the template out. These commands should all be removed when
+% writing assignment content.
+%
+% This template uses a Perl script as an example snippet of code, most other
+% languages are also usable. Configure them in the "CODE INCLUSION
+% CONFIGURATION" section.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass{article}
+
+\usepackage{fancyhdr} % Required for custom headers
+\usepackage{lastpage} % Required to determine the last page for the footer
+\usepackage{extramarks} % Required for headers and footers
+\usepackage[usenames,dvipsnames]{color} % Required for custom colors
+\usepackage{graphicx} % Required to insert images
+\usepackage{subcaption}
+\usepackage{listings} % Required for insertion of code
+\usepackage{courier} % Required for the courier font
+\usepackage{lipsum} % Used for inserting dummy 'Lorem ipsum' text into the template
+
+% Margins
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.5in
+\textheight=9.0in
+\headsep=0.25in
+
+\linespread{1.1} % Line spacing
+
+% Set up the header and footer
+\pagestyle{fancy}
+\lhead{\hmwkAuthorName} % Top left header
+\chead{\hmwkClass\ (\hmwkClassTime): \hmwkTitle} % Top center head
+%\rhead{\firstxmark} % Top right header
+\lfoot{\lastxmark} % Bottom left footer
+\cfoot{} % Bottom center footer
+\rfoot{Page\ \thepage\ of\ \protect\pageref{LastPage}} % Bottom right footer
+\renewcommand\headrulewidth{0.4pt} % Size of the header rule
+\renewcommand\footrulewidth{0.4pt} % Size of the footer rule
+
+\setlength\parindent{0pt} % Removes all indentation from paragraphs
+
+%----------------------------------------------------------------------------------------
+%	CODE INCLUSION CONFIGURATION
+%----------------------------------------------------------------------------------------
+
+\definecolor{MyDarkGreen}{rgb}{0.0,0.4,0.0} % This is the color used for comments
+\lstloadlanguages{Perl} % Load Perl syntax for listings, for a list of other languages supported see: ftp://ftp.tex.ac.uk/tex-archive/macros/latex/contrib/listings/listings.pdf
+\lstset{language=Perl, % Use Perl in this example
+	frame=single, % Single frame around code
+	basicstyle=\small\ttfamily, % Use small true type font
+	keywordstyle=[1]\color{Blue}\bf, % Perl functions bold and blue
+	keywordstyle=[2]\color{Purple}, % Perl function arguments purple
+	keywordstyle=[3]\color{Blue}\underbar, % Custom functions underlined and blue
+	identifierstyle=, % Nothing special about identifiers
+	commentstyle=\usefont{T1}{pcr}{m}{sl}\color{MyDarkGreen}\small, % Comments small dark green courier font
+	stringstyle=\color{Purple}, % Strings are purple
+	showstringspaces=false, % Don't put marks in string spaces
+	tabsize=5, % 5 spaces per tab
+	%
+	% Put standard Perl functions not included in the default language here
+	morekeywords={rand},
+	%
+	% Put Perl function parameters here
+	morekeywords=[2]{on, off, interp},
+	%
+	% Put user defined functions here
+	morekeywords=[3]{test},
+	%
+	morecomment=[l][\color{Blue}]{...}, % Line continuation (...) like blue comment
+	numbers=left, % Line numbers on left
+	firstnumber=1, % Line numbers start with line 1
+	numberstyle=\tiny\color{Blue}, % Line numbers are blue and small
+	stepnumber=5 % Line numbers go in steps of 5
+}
+
+% Creates a new command to include a perl script, the first parameter is the filename of the script (without .pl), the second parameter is the caption
+\newcommand{\perlscript}[2]{
+	\begin{itemize}
+		\item[]\lstinputlisting[caption=#2,label=#1]{#1.pl}
+	\end{itemize}
+}
+
+%----------------------------------------------------------------------------------------
+%	DOCUMENT STRUCTURE COMMANDS
+%	Skip this unless you know what you're doing
+%----------------------------------------------------------------------------------------
+
+% Header and footer for when a page split occurs within a problem environment
+\newcommand{\enterProblemHeader}[1]{
+	%\nobreak\extramarks{#1}{#1 continued on next page\ldots}\nobreak
+	%\nobreak\extramarks{#1 (continued)}{#1 continued on next page\ldots}\nobreak
+}
+
+% Header and footer for when a page split occurs between problem environments
+\newcommand{\exitProblemHeader}[1]{
+	%\nobreak\extramarks{#1 (continued)}{#1 continued on next page\ldots}\nobreak
+	%\nobreak\extramarks{#1}{}\nobreak
+}
+
+\setcounter{secnumdepth}{0} % Removes default section numbers
+\newcounter{homeworkProblemCounter} % Creates a counter to keep track of the number of problems
+\setcounter{homeworkProblemCounter}{-1}
+
+\newcommand{\homeworkProblemName}{}
+\newenvironment{homeworkProblem}[1][Problem \arabic{homeworkProblemCounter}]{ % Makes a new environment called homeworkProblem which takes 1 argument (custom name) but the default is "Problem #"
+	\stepcounter{homeworkProblemCounter} % Increase counter for number of problems
+	\renewcommand{\homeworkProblemName}{#1} % Assign \homeworkProblemName the name of the problem
+	\section{\homeworkProblemName} % Make a section in the document with the custom problem count
+	\enterProblemHeader{\homeworkProblemName} % Header and footer within the environment
+}{
+	\exitProblemHeader{\homeworkProblemName} % Header and footer after the environment
+}
+
+\newcommand{\problemAnswer}[1]{ % Defines the problem answer command with the content as the only argument
+	\noindent\framebox[\columnwidth][c]{\begin{minipage}{0.98\columnwidth}#1\end{minipage}} % Makes the box around the problem answer and puts the content inside
+}
+
+\newcommand{\homeworkSectionName}{}
+\newenvironment{homeworkSection}[1]{ % New environment for sections within homework problems, takes 1 argument - the name of the section
+	\renewcommand{\homeworkSectionName}{#1} % Assign \homeworkSectionName to the name of the section from the environment argument
+	\subsection{\homeworkSectionName} % Make a subsection with the custom name of the subsection
+	\enterProblemHeader{\homeworkProblemName\ [\homeworkSectionName]} % Header and footer within the environment
+}{
+	\enterProblemHeader{\homeworkProblemName} % Header and footer after the environment
+}
+
+%----------------------------------------------------------------------------------------
+%	NAME AND CLASS SECTION
+%----------------------------------------------------------------------------------------
+
+\newcommand{\hmwkTitle}{Project 4} % Assignment title
+\newcommand{\hmwkDueDate}{Sunday,\ April\ 2,\ 2018} % Due date
+\newcommand{\hmwkClass}{CSC411} % Course/class
+\newcommand{\hmwkClassTime}{L0101} % Class/lecture time
+\newcommand{\hmwkAuthorName}{Ying Yang} % Your name
+
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+\title{
+	\vspace{2in}
+	\textmd{\textbf{\hmwkClass:\ \hmwkTitle}}\\
+	\normalsize\vspace{0.1in}\small{Due\ on\ \hmwkDueDate}\\
+	\vspace{0.1in}
+	\vspace{3in}
+}
+
+\author{\textbf{\hmwkAuthorName}}
+%\date{} % Insert date here if you want it to appear below your name
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+	\maketitle
+	\clearpage
+	%----------------------------------------------------------------------------------------
+	%	PROBLEM 1
+	%----------------------------------------------------------------------------------------
+
+	% To have just one problem per page, simply put a \clearpage after each problem
+
+	\begin{homeworkProblem}[ Part 1]
+
+		\noindent \textit{Environment}
+		
+		$\newline$
+		The grid is represented by horizontal, vertical and diagonal indices. The coordinates are the indices from 0 - 8. The win-set is represented by a fix matrix in which the first row represents 3 sets of horizontal rows for which a player wins the game, the second row represent the vertical column, and the third row represents the diagonal of the tictactoe. 
+        
+        The attributes turn represents whose turn to play the game (player1 or player 2). The attribute done means whether the game is over (when a player wins, or a tie occurs).
+        
+        Play a game of TicTacToe by calling the step(), and render() methods.
+        
+        \begin{lstlisting}[language=Python, caption=Compute network function]
+      	env.step(0)
+      	(array([1, 0, 0, 0, 0, 0, 0, 0, 0]), 'valid', False)
+      	env.render()
+      	x..
+      	...
+      	...
+      	====
+      	env.step(2)
+      	(array([1, 0, 2, 0, 0, 0, 0, 0, 0]), 'valid', False)
+      	env.render()
+      	x.o
+      	...
+      	...
+      	====
+      	env.step(4)
+      	(array([1, 0, 2, 0, 1, 0, 0, 0, 0]), 'valid', False)
+      	env.render()
+      	x.o
+      	.x.
+      	...
+      	====
+      	env.step(8)
+      	(array([1, 0, 2, 0, 1, 0, 0, 0, 2]), 'valid', False)
+      	env.render()
+      	x.o
+      	.x.
+      	..o
+      	====
+      	env.step(6)
+      	(array([1, 0, 2, 0, 1, 0, 1, 0, 2]), 'valid', False)
+      	env.render()
+      	x.o
+      	.x.
+      	x.o
+      	====
+      	env.step(1)
+      	(array([1, 2, 2, 0, 1, 0, 1, 0, 2]), 'valid', False)
+      	env.render()
+      	xoo
+      	.x.
+      	x.o
+      	====
+      	env.step(3)
+      	(array([1, 2, 2, 1, 1, 0, 1, 0, 2]), 'win', True)
+      	env.render()
+      	xoo
+      	xx.
+      	x.o
+      	====
+        \end{lstlisting}
+        
+
+	\end{homeworkProblem}
+	\clearpage
+	%----------------------------------------------------------------------------------------
+	%	PROBLEM 2
+	%----------------------------------------------------------------------------------------
+
+	\begin{homeworkProblem}[ Part 2]
+
+		\noindent \textit{Complete the implementation so that policy is a neural network with one hidden layer}
+			
+		$\newline$
+		
+
+		\begin{homeworkProblem}[ Part 2 (a)]
+				\begin{lstlisting}[language=Python, caption=Policy implementation]
+			class Policy(nn.Module):
+			"""
+			The Tic-Tac-Toe Policy
+			"""
+			def __init__(self, input_size=27, hidden_size=64, output_size=9):
+			super(Policy, self).__init__()
+			# TODO
+			self.linear_f1 = nn.Linear(input_size, hidden_size)
+			self.linear_f2 = nn.Linear(hidden_size, output_size)
+			
+			def forward(self, x):
+			# TODO
+			h = F.relu(self.linear_f1(x))
+			out = F.softmax(self.linear_f2(h))
+			return out
+			\end{lstlisting}
+		\end{homeworkProblem}
+	
+	
+		\begin{homeworkProblem}[ Part 2 (b)]
+			\begin{lstlisting}[language=Python, caption=Policy]
+			policy = Policy()
+			state = np.array([1,0,1,2,1,0,1,0,1])
+			state = torch.from_numpy(state).long().unsqueeze(0)
+			state = torch.zeros(3,9).scatter_(0, state, 1).view(1, 27)
+			print(state)
+			\end{lstlisting}
+			
+			\begin{lstlisting}[language=Python, caption=output]
+			Columns 0 to 12 
+			0     1     0     0     0     1     0     1     0     1     0     1     0
+			
+			Columns 13 to 25 
+			1     0     1     0     1     0     0     0     1     0     0     0     0
+			
+			Columns 26 to 26 
+			0
+			[torch.FloatTensor of size 1x27]
+			\end{lstlisting}
+			State what each of the 27 dimensions mean
+			
+		\end{homeworkProblem}
+	
+		\begin{homeworkProblem}[ Part 2 (c)]
+			Explain what the value in each dimension means.
+			The value in each dimension means 
+			Is this policy stochastic or deterministic?
+			
+			The policy is stochastic.
+		\end{homeworkProblem}
+	\end{homeworkProblem}
+	\clearpage
+	%----------------------------------------------------------------------------------------
+	%	PROBLEM 3
+	%----------------------------------------------------------------------------------------
+
+	\begin{homeworkProblem}[Part 3]
+
+		\begin{homeworkProblem}[Part 3a]
+			\noindent \textit{Implement the compute\_returns function}
+			$\newline$
+			\begin{lstlisting}[language=Python, caption=output]
+			l = len(rewards)
+			rewards = np.array(rewards)
+			gammas = np.array([gamma ** (i) for i in range(l)])
+			
+			G = []
+			for i in range(l):
+				G.append(sum(rewards[i:] * gammas[:l - i]))
+			return G
+			\end{lstlisting}
+
+		\end{homeworkProblem}
+
+		\begin{homeworkProblem}[Part 3b]
+			\noindent \textit{Explain why can we not update weights in the middle of an episode}
+			$\newline$
+			
+			
+		\end{homeworkProblem}
+
+	\end{homeworkProblem}
+	\clearpage
+
+	%----------------------------------------------------------------------------------------
+	%	PROBLEM 4
+	%----------------------------------------------------------------------------------------
+
+	\begin{homeworkProblem}[Part 4]
+
+		\noindent \textit{Train the neural network using gradient descent (without momentum). Plot the learning curves. Display the weights going into each of the output units.}
+
+		$\newline$
+		Optimization procedure:
+
+		We initialized the parameters as follows:
+			\begin{lstlisting}[language=Python, caption=Parameter Initialization]
+		# load weights and biases
+		snapshot = cPickle.load(open("snapshot50.pkl"))
+		W0 = snapshot["W0"] # dimension = (748, 300)
+		b0 = snapshot["b0"].reshape((300, 1))
+		W1 = snapshot["W1"] # dimension = (300, 10)
+		b1 = snapshot["b1"].reshape((10, 1))
+
+		# initiate weights, bias and alpha
+		initial_weight = dot(W0, W1)  # (748, 10)
+		initial_bias = b1  #(10, 1)
+		alpha = 1e-5  # learning rate
+
+		EPS = 1e-10
+		prev_w = initial_weight - 10 * EPS
+		prev_b = initial_bias - 10 * EPS
+		W = initial_weight.copy()
+		b = initial_bias.copy()
+		iteration = 0
+		max_iteration = 4000
+		\end{lstlisting}
+
+		We initialized the weight to be the dot product of W0 and W1.
+		We repeatedly experimented with different alpha values and observe the results. We first set alpha=0.001. The percentage of correctness turned out to be very low (with 25\% of correcteness).  Then we decreased the learning rate to 0.00001. The correctness percentage then improved to 89\%.
+
+		$\newline$
+		Gradient descent procedure:
+
+		\begin{lstlisting}[language=Python, caption=Parameter Initialization]
+		# apply gradient descent
+		while norm(W - prev_w) > EPS and norm(b - prev_b) > EPS and iteration < max_iteration:
+			prev_w = W.copy()
+			prev_b = b.copy()
+			W -= alpha * df_w(train_set.T, W, b, train_label.T)
+			b -= alpha * df_b(train_set.T, W, b, train_label.T)
+			if iteration % 100 == 0:
+				epoch.append(iteration)
+				train_performance.append(performance(train_set.T, W, b, train_label.T))
+				test_performance.append(performance(test_set.T, W, b, test_label.T))
+			iteration += 1
+		\end{lstlisting}
+
+		$\newline$
+		\clearpage
+
+		Learning curve is shown in the figure below:
+		$\newline$
+
+
+
+
+	\end{homeworkProblem}
+	\clearpage
+
+	%----------------------------------------------------------------------------------------
+	%	PROBLEM 5
+	%----------------------------------------------------------------------------------------
+
+	\begin{homeworkProblem}[Part 5]
+
+		\noindent \textit{Write vectorized code that performs gradient descent with momentum, and use it to train your network. Plot the learning curves}
+
+		Learning curve with momentum:l
+
+
+		How new learning curves compare with gradient descent without momentum:
+		Without the momentum, the performance of correct guesses increased slower than if momentum were used. For example, as we can observe in the learning curve, the performance of training set only increased to 92\% after 800 iterations, wheareas with momentum term set to 0.99, the performance correcnesses increased to the same percentage by only using 400 iterations, because it moved faster when gradient consistenly points to one direction.
+
+		$\newline$
+
+		Code added in the gradient descent:
+
+		In the train\_neural\_network method, method signature was modified to take two
+		extra terms: type and momemtum term. The rest of code remains unchanged
+		as in part 4.
+		\clearpage
+
+		\begin{lstlisting}[language=Python, caption= Gradient descent with momentum]
+
+		train_neural_network(image_prefix, type="None", momentum_term=0):
+
+		v_w = 0 # for momentum
+		v_b = 0
+		if type == "momentum":
+		    v_w = momentum_term * v_w + alpha * df_w(train_set.T, W, b, train_label.T)
+		    W -= v_w
+		    v_b = momentum_term * v_b + alpha * df_b(train_set.T, W, b, train_label.T)
+		    b -= v_b
+
+		if __name__ == "__main__":
+			momentum_term = 0.99
+			train_neural_network("part5", "momentum", momentum_term)
+		\end{lstlisting}
+
+
+	\end{homeworkProblem}
+	\clearpage
+	%----------------------------------------------------------------------------------------
+	%	PROBLEM 6
+	%----------------------------------------------------------------------------------------
+
+	\begin{homeworkProblem}[Part 6]
+
+		\begin{homeworkProblem}[Part 6a]
+
+		Plot the contour of the cost function
+
+
+		\end{homeworkProblem}
+
+		\begin{homeworkProblem}[Part 6b]
+
+
+		\end{homeworkProblem}
+
+		\begin{homeworkProblem}[Part 6c]
+
+
+		\end{homeworkProblem}
+
+		\begin{homeworkProblem}[Part 6d]
+
+
+		\end{homeworkProblem}
+
+	\end{homeworkProblem}
+
+	\clearpage
+	%----------------------------------------------------------------------------------------
+	%	PROBLEM 7
+	%----------------------------------------------------------------------------------------
+
+	\begin{homeworkProblem}[Part 7]
+
+
+	\end{homeworkProblem}
+
+	\clearpage
+	%----------------------------------------------------------------------------------------
+	%	PROBLEM 7
+	%----------------------------------------------------------------------------------------
+
+	\begin{homeworkProblem}[Part 8]
+
+
+	\end{homeworkProblem}
+	%----------------------------------------------------------------------------------------
+
+\end{document}
