@@ -10,6 +10,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 import torch.distributions
 from torch.autograd import Variable
+import matplotlib.pyplot as plt
 
 class Environment(object):
     """
@@ -103,7 +104,7 @@ class Policy(nn.Module):
     """
     The Tic-Tac-Toe Policy
     """
-    def __init__(self, input_size=27, hidden_size=64, output_size=9):
+    def __init__(self, input_size=27, hidden_size=32, output_size=9):
         super(Policy, self).__init__()
         # TODO
         self.linear_f1 = nn.Linear(input_size, hidden_size)
@@ -144,14 +145,21 @@ def compute_returns(rewards, gamma=1.0):
     [-2.5965000000000003, -2.8850000000000002, -2.6500000000000004, -8.5, -10.0]
     """
     # TODO
-    l = len(rewards)
-    rewards = np.array(rewards)
-    gammas = np.array([gamma ** (i) for i in range(l)])
+    #l = len(rewards)
+    #rewards = np.array(rewards)
+    #gammas = np.array([gamma ** (i) for i in range(l)])
     
-    G = []
-    for i in range(l):
-        G.append(sum(rewards[i:] * gammas[:l - i]))
-    return G
+    #G = []
+    #for i in range(l):
+        #G.append(sum(rewards[i:] * gammas[:l - i]))
+    #return G
+    G = [0] * len(rewards)
+    
+    for i in range(len(rewards)-1, -1, -1):
+        if i == len(rewards)-1: G[i] = rewards[i]
+        else: G[i] = rewards[i] + gamma * G[i+1]
+
+    return G    
 
 
 def finish_episode(saved_rewards, saved_logprobs, gamma=1.0):
@@ -173,11 +181,11 @@ def finish_episode(saved_rewards, saved_logprobs, gamma=1.0):
 def get_reward(status):
     """Returns a numeric given an environment status."""
     return {
-            Environment.STATUS_VALID_MOVE  : 0, # TODO
-            Environment.STATUS_INVALID_MOVE: 0,
-            Environment.STATUS_WIN         : 0,
-            Environment.STATUS_TIE         : 0,
-            Environment.STATUS_LOSE        : 0
+            Environment.STATUS_VALID_MOVE  : 1, # TODO
+            Environment.STATUS_INVALID_MOVE: -1,
+            Environment.STATUS_WIN         : 10,
+            Environment.STATUS_TIE         : 4,
+            Environment.STATUS_LOSE        : -2
     }[status]
 
 
@@ -187,7 +195,10 @@ def train(policy, env, gamma=1.0, log_interval=1000):
     scheduler = torch.optim.lr_scheduler.StepLR(
             optimizer, step_size=10000, gamma=0.9)
     running_reward = 0
-
+    
+    episode_axis = []
+    return_axis = []
+    
     for i_episode in count(1):
         saved_rewards = []
         saved_logprobs = []
@@ -206,6 +217,10 @@ def train(policy, env, gamma=1.0, log_interval=1000):
         finish_episode(saved_rewards, saved_logprobs, gamma)
 
         if i_episode % log_interval == 0:
+            print(i_episode)
+            episode_axis.extend([i_episode])
+            return_axis.extend([running_reward/log_interval])            
+            
             print('Episode {}\tAverage return: {:.2f}'.format(
                 i_episode,
                 running_reward / log_interval))
@@ -219,7 +234,14 @@ def train(policy, env, gamma=1.0, log_interval=1000):
             optimizer.step()
             scheduler.step()
             optimizer.zero_grad()
-
+            
+        if i_episode == 50000:
+            fig = plt.figure()
+            plt.plot(episode_axis, return_axis)
+            plt.xlabel("Episodes")
+            plt.ylabel("Average return")
+            plt.title("Training curve of the tictactoe model")
+            plt.savefig("part5b_hidden32.png")            
 
 def first_move_distr(policy, env):
     """Display the distribution of first moves."""
@@ -229,29 +251,61 @@ def first_move_distr(policy, env):
     pr = policy(Variable(state))
     return pr.data
 
-
 def load_weights(policy, episode):
     """Load saved weights"""
     weights = torch.load("ttt/policy-%d.pkl" % episode)
     policy.load_state_dict(weights)
 
+def play_games_against_random(policy, env, games=100):
+    """Play games against random and return number of games won, lost or tied"""
+    games_won, games_lost, games_tied = 0, 0, 0
+    
+    for i in range(games):
+        state = env.reset()
+        done = False
+        # print(i)
+
+        while not done:
+            action, logprob = select_action(policy, state)
+            state, status, done = env.play_against_random(action)
+            # env.render()
+
+        if status == env.STATUS_WIN: games_won += 1
+        elif status == env.STATUS_LOSE: games_lost += 1
+        else: games_tied += 1
+
+    return games_won, games_lost, games_tied    
 
 if __name__ == '__main__':
     import sys
     policy = Policy()
     env = Environment()
+    
+    # part 2
     # env.render()
-    state = np.array([1,0,1,2,1,0,1,0,1])
-    state = torch.from_numpy(state).long().unsqueeze(0)
-    state = torch.zeros(3,9).scatter_(0, state, 1).view(1, 27)
-    print(state)
-
-    # if len(sys.argv) == 1:
-    #     # `python tictactoe.py` to train the agent
-    #     train(policy, env)
-    # else:
-    #     # `python tictactoe.py <ep>` to print the first move distribution
-    #     # using weightt checkpoint at episode int(<ep>)
-    #     ep = int(sys.argv[1])
-    #     load_weights(policy, ep)
-    #     print(first_move_distr(policy, env))
+    # state = np.array([1,0,1,2,1,0,1,0,1])
+    # state = torch.from_numpy(state).long().unsqueeze(0)
+    # state = torch.zeros(3,9).scatter_(0, state, 1).view(1, 27)
+    # print(state)
+    
+    # part 5a plot training curve
+    if len(sys.argv) == 1:
+        train(policy, env)
+    else:
+        ep = int(sys.argv[1])
+        load_weights(policy, ep)
+        print(first_move_distr(policy, env))
+        print(play_games_against_random(policy, env))
+    
+    # part 5b. Try with different sizes of hidden units.
+    #hidden_units = [32, 128, 256]
+    #for h in hidden_units:
+        #policy.__init__(input_size=27, hidden_size=h, output_size=9)
+        #if len(sys.argv) == 1:
+            #train(policy, env)
+        #else:
+            #ep = int(sys.argv[1])
+            #load_weights(policy, ep)
+            #print(first_move_distr(policy, env))
+            #print(play_games_against_random(policy, env))        
+    
