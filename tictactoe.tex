@@ -298,16 +298,19 @@
 			0
 			[torch.FloatTensor of size 1x27]
 			\end{lstlisting}
-			State what each of the 27 dimensions mean
+			State what each of the 27 dimensions mean.
+			
+			The 27 dimensions is formatted as a 3 X 9 matrix.
+			
+			Each column index represents the position of grid.
 			
 		\end{homeworkProblem}
 	
 		\begin{homeworkProblem}[ Part 2 (c)]
 			Explain what the value in each dimension means.
-			The value in each dimension means 
-			Is this policy stochastic or deterministic?
+			The values in each dimension are the probabilities of the agent's next move to that position. 
 			
-			The policy is stochastic.
+			The policy is stochastic since the agent uses a random policy to make its next move.
 		\end{homeworkProblem}
 	\end{homeworkProblem}
 	\clearpage
@@ -440,13 +443,129 @@
 		\begin{homeworkProblem}[Part 5d]
 			\noindent \textit{Use your learned policy to play 100 games against random. }\\
 		
-			
 			How many did your agent win / lose / tie? 
+		
+			Results for playing 100 games against random
 			
+			wins: 92        losses: 4       ties:4
 			
 			Display five games that your trained agent plays against the random policy. 
+			\begin{lstlisting}[language=Python, caption=modified function]
+			Game 1
+			..o
+			...
+			.x.
+			====
+			..o
+			o..
+			xx.
+			====
+			..o
+			o..
+			xxx
+			====
+			wins: 1 losses: 0       ties:0
+			(0.01, 0.0, 0.0)
 			
-			Explain any strategies that you think your agent has learned.	
+			Game 2
+			...
+			...
+			.xo
+			====
+			.o.
+			.x.
+			.xo
+			====
+			.o.
+			.xo
+			xxo
+			====
+			.ox
+			.xo
+			xxo
+			====
+			wins: 1 losses: 0       ties:0
+			(0.01, 0.0, 0.0)
+			
+			Game 3
+			..o
+			...
+			.x.
+			====
+			o.o
+			...
+			xx.
+			====
+			o.o
+			...
+			xxx
+			====
+			wins: 1 losses: 0       ties:0
+			(0.01, 0.0, 0.0)
+			
+			Game 4
+			...
+			.o.
+			.x.
+			====
+			...
+			.o.
+			oxx
+			====
+			xo.
+			.o.
+			oxx
+			====
+			xox
+			.oo
+			oxx
+			====
+			xox
+			xoo
+			oxx
+			====
+			wins: 0 losses: 0       ties:1
+			(0.0, 0.0, 0.01)
+			
+			Game 5
+			...
+			..o
+			.x.
+			====
+			o..
+			..o
+			xx.
+			====
+			o..
+			..o
+			xxx
+			====
+			wins: 1 losses: 0       ties:0
+			(0.01, 0.0, 0.0)
+			\end{lstlisting}
+			
+			Explain any strategies that you think your agent has learned.\\	
+			
+			By examining the steps that agent made, it is possible to see that the agent might learned to prioritize to make the step that allows to win the game fastest. For example, if it makes a first move without having the opponent blocking one of its winning lines (vertical, horizontal, diagonal), it will continue making move towards that line until the opponent blocks it. 
+			
+			Also, it might learned to avoid making useless moves such as making a move that doesn't block the opponent, or making a move that is obviously a dead move, that is useless. (such case figure below: )
+			
+			before : 
+			
+			o . . 
+			
+			x . o
+			
+			.  . .
+			
+			After : 
+			
+			o . . 
+			
+			x x o
+			
+			.  . .
+			
 			
 			
 		\end{homeworkProblem}
@@ -483,7 +602,7 @@
 	What has your model learned? 
 	
 	Does the distribution make sense?
-
+	
 	\end{homeworkProblem}
 
 	\clearpage
@@ -494,7 +613,7 @@
 	\begin{homeworkProblem}[Part 8]
 	Your learned policy should do fairly well against a random policy, but may not win consistently. What are some of the mistakes that your agent made?
 	
-	
+	Examples of mistakes that the agent made were it didn't prevent the opponent from winning by making random moves when the opponent had two same placements already. 
     
 	\end{homeworkProblem}
 	%----------------------------------------------------------------------------------------

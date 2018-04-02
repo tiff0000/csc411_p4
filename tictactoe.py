@@ -12,14 +12,15 @@ import torch.distributions
 from torch.autograd import Variable
 import matplotlib.pyplot as plt
 
+
 class Environment(object):
     """
     The Tic-Tac-Toe Environment
     """
     # possible ways to win
-    win_set = frozenset([(0,1,2), (3,4,5), (6,7,8), # horizontal
-                         (0,3,6), (1,4,7), (2,5,8), # vertical
-                         (0,4,8), (2,4,6)])         # diagonal
+    win_set = frozenset([(0, 1, 2), (3, 4, 5), (6, 7, 8),  # horizontal
+                         (0, 3, 6), (1, 4, 7), (2, 5, 8),  # vertical
+                         (0, 4, 8), (2, 4, 6)])  # diagonal
     # statuses
     STATUS_VALID_MOVE = 'valid'
     STATUS_INVALID_MOVE = 'inv'
@@ -33,14 +34,14 @@ class Environment(object):
 
     def reset(self):
         """Reset the game to an empty board."""
-        self.grid = np.array([0] * 9) # grid
-        self.turn = 1                 # whose turn it is
-        self.done = False             # whether game is done
+        self.grid = np.array([0] * 9)  # grid
+        self.turn = 1  # whose turn it is
+        self.done = False  # whether game is done
         return self.grid
 
     def render(self):
         """Print what is on the board."""
-        map = {0:'.', 1:'x', 2:'o'} # grid label vs how to plot
+        map = {0: '.', 1: 'x', 2: 'o'}  # grid label vs how to plot
         print(''.join(map[i] for i in self.grid[0:3]))
         print(''.join(map[i] for i in self.grid[3:6]))
         print(''.join(map[i] for i in self.grid[6:9]))
@@ -104,6 +105,7 @@ class Policy(nn.Module):
     """
     The Tic-Tac-Toe Policy
     """
+
     def __init__(self, input_size=27, hidden_size=32, output_size=9):
         super(Policy, self).__init__()
         # TODO
@@ -120,9 +122,9 @@ class Policy(nn.Module):
 def select_action(policy, state):
     """Samples an action from the policy at the state."""
     state = torch.from_numpy(state).long().unsqueeze(0)
-    state = torch.zeros(3,9).scatter_(0,state,1).view(1,27)
+    state = torch.zeros(3, 9).scatter_(0, state, 1).view(1, 27)
     pr = policy(Variable(state))
-    m = torch.distributions.Categorical(pr) 
+    m = torch.distributions.Categorical(pr)
     action = m.sample()
     log_prob = torch.sum(m.log_prob(action))
     return action.data[0], log_prob
@@ -153,6 +155,7 @@ def compute_returns(rewards, gamma=1.0):
     for i in range(l):
         G.append(sum(rewards[i:] * gammas[:l - i]))
     return G
+
 
 def finish_episode(saved_rewards, saved_logprobs, gamma=1.0):
     """Samples an action from the policy at the state."""
@@ -194,14 +197,14 @@ def train(policy, env, gamma=0.9, log_interval=1000, part="part5", hidden_units=
     """Train policy gradient."""
     optimizer = optim.Adam(policy.parameters(), lr=0.001)
     scheduler = torch.optim.lr_scheduler.StepLR(
-            optimizer, step_size=10000, gamma=0.9)
+        optimizer, step_size=10000, gamma=0.9)
     running_reward = 0
-    
+
     episode = []
     avg_return = []
 
     win_rates, loss_rates, tie_rates = [], [], []
-    
+
     for i_episode in count(1):
         saved_rewards = []
         saved_logprobs = []
@@ -221,7 +224,7 @@ def train(policy, env, gamma=0.9, log_interval=1000, part="part5", hidden_units=
 
         if i_episode % log_interval == 0:
             episode.append(i_episode)
-            avg_return.append(running_reward/log_interval)
+            avg_return.append(running_reward / log_interval)
 
             won_rate, lost_rate, tie_rate = play_against_random(policy, env)
             win_rates.append(won_rate)
@@ -234,7 +237,7 @@ def train(policy, env, gamma=0.9, log_interval=1000, part="part5", hidden_units=
                 i_episode,
                 running_reward / log_interval))
             running_reward = 0
-            print('Win rate{}\tLose rate{}\tTie rate{}\tInvalid Moves{}'.format(
+            print('Win rate {}\tLose rate {}\tTie rate {}\tInvalid Moves {}'.format(
                 won_rate,
                 lost_rate,
                 tie_rate,
@@ -249,7 +252,7 @@ def train(policy, env, gamma=0.9, log_interval=1000, part="part5", hidden_units=
             optimizer.step()
             scheduler.step()
             optimizer.zero_grad()
-            
+
         if i_episode == 50000:
             if part == "part5":
                 fig = plt.figure()
@@ -281,7 +284,7 @@ def first_move_distr(policy, env):
     """Display the distribution of first moves."""
     state = env.reset()
     state = torch.from_numpy(state).long().unsqueeze(0)
-    state = torch.zeros(3,9).scatter_(0,state,1).view(1,27)
+    state = torch.zeros(3, 9).scatter_(0, state, 1).view(1, 27)
     pr = policy(Variable(state))
     return pr.data
 
@@ -293,7 +296,7 @@ def load_weights(policy, episode):
 
 
 # part 5d
-def play_against_random(policy, env):
+def play_against_random(policy, env, part="", print_results=False):
     """
     Play 100 games against random and return the rate of wins, losses and ties of the agent.
     """
@@ -303,20 +306,29 @@ def play_against_random(policy, env):
     tie_num = 0
 
     num_games = 100
+
+    if part == "part5d":
+        num_games = 1
+
     for i in range(num_games):
         state = env.reset()
         done = False
         while not done:
             action, probability = select_action(policy, state)
             state, status, done = env.play_against_random(action)
-
+            if part == "part5d":
+                env.render()
         won_num += status == Environment.STATUS_WIN
         lost_num += status == Environment.STATUS_LOSE
         tie_num += status == Environment.STATUS_TIE
 
-    print("wons: {}\tlosses: {}\tties:{}".format(
-        won_num, lost_num, tie_num
-    ))
+        if part == "part5d":
+            print("wins: {}\tlosses: {}\tties:{}".format(won_num, lost_num, tie_num))
+
+    if print_results:
+        print("Results for playing 100 games against random")
+        print("wins: {}\tlosses: {}\tties:{}".format(won_num, lost_num, tie_num))
+
 
     won_num /= 100.0
     lost_num /= 100.0
@@ -324,26 +336,6 @@ def play_against_random(policy, env):
 
     return won_num, lost_num, tie_num
 
-# def display_five_games_against_random(policy, env):
-#     won_num = 0
-#     lost_num = 0
-#     tie_num = 0
-#
-#     num_games = 100
-#     for i in range(num_games):
-#         state = env.reset()
-#         done = False
-#         while not done:
-#             action, probability = select_action(policy, state)
-#             state, status, done = env.play_against_random(action)
-#
-#         won_num += status == Environment.STATUS_WIN
-#         lost_num += status == Environment.STATUS_LOSE
-#         tie_num += status == Environment.STATUS_TIE
-#
-#     print("wons: {}\tlosses: {}\tties:{}".format(
-#         won_num, lost_num, tie_num
-#     ))
 
 def get_invalid_moves(policy, env):
     """
@@ -364,16 +356,17 @@ def get_invalid_moves(policy, env):
 
 if __name__ == '__main__':
     import sys
+
     policy = Policy()
     env = Environment()
-    
+
     # part 2
     # env.render()
     # state = np.array([1,0,1,2,1,0,1,0,1])
     # state = torch.from_numpy(state).long().unsqueeze(0)
     # state = torch.zeros(3,9).scatter_(0, state, 1).view(1, 27)
     # print(state)
-    
+
     # part 5a plot training curve
     # train(policy, env)
 
@@ -386,7 +379,13 @@ if __name__ == '__main__':
     #     print(play_against_random(policy, env))
 
     # part 5d
-    # print(play_against_random(policy, env))
+    train(policy, env)
+    # play 100 games against random
+    play_against_random(policy, env, print_results=True)
+    for i in range(5):
+        print("Game " + str(i + 1))
+        print(play_against_random(policy, env, "part5d"))
+        print()
 
     # part 6
     # train(policy, env, part="part6")
