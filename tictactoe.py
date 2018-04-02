@@ -181,12 +181,21 @@ def finish_episode(saved_rewards, saved_logprobs, gamma=1.0):
 def get_reward(status):
     """Returns a numeric given an environment status."""
     return {
-            Environment.STATUS_VALID_MOVE  : 1, # TODO
-            Environment.STATUS_INVALID_MOVE: -1,
-            Environment.STATUS_WIN         : 10,
-            Environment.STATUS_TIE         : 4,
+            Environment.STATUS_VALID_MOVE  : 1,
+            Environment.STATUS_INVALID_MOVE: -5,
+            Environment.STATUS_WIN         : 20,
+            Environment.STATUS_TIE         : 0,
             Environment.STATUS_LOSE        : -2
     }[status]
+
+    # part6.1
+    # return {
+    #         Environment.STATUS_VALID_MOVE  : 1,
+    #         Environment.STATUS_INVALID_MOVE: -50,
+    #         Environment.STATUS_WIN         : 200,
+    #         Environment.STATUS_TIE         : 10,
+    #         Environment.STATUS_LOSE        : -200
+    # }[status]
 
 
 def train(policy, env, gamma=1.0, log_interval=1000):
@@ -196,8 +205,10 @@ def train(policy, env, gamma=1.0, log_interval=1000):
             optimizer, step_size=10000, gamma=0.9)
     running_reward = 0
     
-    episode_axis = []
-    return_axis = []
+    episode = []
+    avg_return = []
+
+    win_rates, loss_rates, tie_rates = [], [], []
     
     for i_episode in count(1):
         saved_rewards = []
@@ -217,14 +228,26 @@ def train(policy, env, gamma=1.0, log_interval=1000):
         finish_episode(saved_rewards, saved_logprobs, gamma)
 
         if i_episode % log_interval == 0:
-            print(i_episode)
-            episode_axis.extend([i_episode])
-            return_axis.extend([running_reward/log_interval])            
-            
+            episode.append(i_episode)
+            avg_return.append(running_reward/log_interval)
+
+            won_rate, lost_rate, tie_rate = play_against_random(policy, env)
+            win_rates.append(won_rate)
+            loss_rates.append(lost_rate)
+            tie_rates.append(tie_rate)
+
+            invalid_moves = get_invalid_moves(policy, env)
+
             print('Episode {}\tAverage return: {:.2f}'.format(
                 i_episode,
                 running_reward / log_interval))
             running_reward = 0
+            print('Win rate{}\tLose rate{}\tTie rate{}\t'.format(
+                won_rate,
+                lost_rate,
+                tie_rate,
+                invalid_moves
+            ))
 
         if i_episode % (log_interval) == 0:
             torch.save(policy.state_dict(),
@@ -237,11 +260,28 @@ def train(policy, env, gamma=1.0, log_interval=1000):
             
         if i_episode == 50000:
             fig = plt.figure()
-            plt.plot(episode_axis, return_axis)
+            # plt.plot(episode, avg_return)
+            # plt.xlabel("Episodes")
+            # plt.ylabel("Average return")
+            # plt.title("Training curve of the tictactoe model")
+            # plt.savefig("part5b_hidden32.png")
+            # plt.savefig("part5b_hidden128.png")
+            # plt.savefig("part5b_hidden16.png")
+
+            # part 6
+            # plt.figure()
+            plt.plot(episode, win_rates, label="Win rate")
+            plt.plot(episode, loss_rates, label="Loss rate")
+            plt.plot(episode, tie_rates, label="Tie rate")
             plt.xlabel("Episodes")
-            plt.ylabel("Average return")
-            plt.title("Training curve of the tictactoe model")
-            plt.savefig("part5b_hidden32.png")            
+            plt.ylabel("Win/lose/tie rates")
+            plt.title("Changes of win/lose/tie rates throughout the training")
+            plt.legend()
+            plt.savefig("part6.1.png")
+
+        if i_episode > 50000:
+            return 0
+
 
 def first_move_distr(policy, env):
     """Display the distribution of first moves."""
@@ -251,30 +291,58 @@ def first_move_distr(policy, env):
     pr = policy(Variable(state))
     return pr.data
 
+
 def load_weights(policy, episode):
     """Load saved weights"""
     weights = torch.load("ttt/policy-%d.pkl" % episode)
     policy.load_state_dict(weights)
 
-def play_games_against_random(policy, env, games=100):
-    """Play games against random and return number of games won, lost or tied"""
-    games_won, games_lost, games_tied = 0, 0, 0
-    
-    for i in range(games):
+
+# part 5d
+def play_against_random(policy, env):
+    """
+    Play 100 games against random and return the rate of wins, losses and ties of the agent.
+    """
+
+    won_num = 0
+    lost_num = 0
+    tie_num = 0
+
+    num_games = 100
+    for i in range(num_games):
         state = env.reset()
         done = False
-        # print(i)
-
         while not done:
-            action, logprob = select_action(policy, state)
+            action, probability = select_action(policy, state)
             state, status, done = env.play_against_random(action)
-            # env.render()
 
-        if status == env.STATUS_WIN: games_won += 1
-        elif status == env.STATUS_LOSE: games_lost += 1
-        else: games_tied += 1
+        won_num += status == Environment.STATUS_WIN
+        lost_num += status == Environment.STATUS_LOSE
+        tie_num += status == Environment.STATUS_TIE
 
-    return games_won, games_lost, games_tied    
+    won_num /= 100.0
+    lost_num /= 100.0
+    tie_num /= 100.0
+
+    return won_num, lost_num, tie_num
+
+
+def get_invalid_moves(policy, env):
+    """
+    Return the number of invalid moves
+    """
+    invalid = 0
+    num_games = 100
+
+    for i in range(num_games):
+        state = env.reset()
+        done = False
+        while not done:
+            action, probability = select_action(policy, state)
+            state, status, done = env.play_against_random(action)
+            invalid += status == env.STATUS_INVALID_MOVE
+    return invalid
+
 
 if __name__ == '__main__':
     import sys
@@ -295,7 +363,7 @@ if __name__ == '__main__':
         ep = int(sys.argv[1])
         load_weights(policy, ep)
         print(first_move_distr(policy, env))
-        print(play_games_against_random(policy, env))
+        print(play_against_random(policy, env))
     
     # part 5b. Try with different sizes of hidden units.
     #hidden_units = [32, 128, 256]
