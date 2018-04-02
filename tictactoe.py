@@ -317,6 +317,7 @@ def play_against_random(policy, env):
     print("wons: {}\tlosses: {}\tties:{}".format(
         won_num, lost_num, tie_num
     ))
+
     won_num /= 100.0
     lost_num /= 100.0
     tie_num /= 100.0
