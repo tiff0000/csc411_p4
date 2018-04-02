@@ -145,22 +145,14 @@ def compute_returns(rewards, gamma=1.0):
     [-2.5965000000000003, -2.8850000000000002, -2.6500000000000004, -8.5, -10.0]
     """
     # TODO
-    #l = len(rewards)
-    #rewards = np.array(rewards)
-    #gammas = np.array([gamma ** (i) for i in range(l)])
-    
-    #G = []
-    #for i in range(l):
-        #G.append(sum(rewards[i:] * gammas[:l - i]))
-    #return G
-    G = [0] * len(rewards)
-    
-    for i in range(len(rewards)-1, -1, -1):
-        if i == len(rewards)-1: G[i] = rewards[i]
-        else: G[i] = rewards[i] + gamma * G[i+1]
+    l = len(rewards)
+    rewards = np.array(rewards)
+    gammas = np.array([gamma ** (i) for i in range(l)])
 
-    return G    
-
+    G = []
+    for i in range(l):
+        G.append(sum(rewards[i:] * gammas[:l - i]))
+    return G
 
 def finish_episode(saved_rewards, saved_logprobs, gamma=1.0):
     """Samples an action from the policy at the state."""
@@ -181,24 +173,24 @@ def finish_episode(saved_rewards, saved_logprobs, gamma=1.0):
 def get_reward(status):
     """Returns a numeric given an environment status."""
     return {
-            Environment.STATUS_VALID_MOVE  : 1,
-            Environment.STATUS_INVALID_MOVE: -5,
-            Environment.STATUS_WIN         : 20,
-            Environment.STATUS_TIE         : 0,
-            Environment.STATUS_LOSE        : -2
+        Environment.STATUS_VALID_MOVE: 5,
+        Environment.STATUS_INVALID_MOVE: -50,
+        Environment.STATUS_WIN: 100,
+        Environment.STATUS_TIE: -10,
+        Environment.STATUS_LOSE: -100
     }[status]
 
     # part6.1
     # return {
-    #         Environment.STATUS_VALID_MOVE  : 1,
-    #         Environment.STATUS_INVALID_MOVE: -50,
-    #         Environment.STATUS_WIN         : 200,
-    #         Environment.STATUS_TIE         : 10,
-    #         Environment.STATUS_LOSE        : -200
+    #     Environment.STATUS_VALID_MOVE: 1,
+    #     Environment.STATUS_INVALID_MOVE: -25,
+    #     Environment.STATUS_WIN: 50,
+    #     Environment.STATUS_TIE: 0,
+    #     Environment.STATUS_LOSE: -2
     # }[status]
 
 
-def train(policy, env, gamma=1.0, log_interval=1000):
+def train(policy, env, gamma=0.9, log_interval=1000):
     """Train policy gradient."""
     optimizer = optim.Adam(policy.parameters(), lr=0.001)
     scheduler = torch.optim.lr_scheduler.StepLR(
@@ -242,18 +234,18 @@ def train(policy, env, gamma=1.0, log_interval=1000):
                 i_episode,
                 running_reward / log_interval))
             running_reward = 0
-            print('Win rate{}\tLose rate{}\tTie rate{}\t'.format(
+            print('Win rate{}\tLose rate{}\tTie rate{}\tInvalid Moves{}'.format(
                 won_rate,
                 lost_rate,
                 tie_rate,
                 invalid_moves
             ))
 
-        if i_episode % (log_interval) == 0:
+        if i_episode % log_interval == 0:
             torch.save(policy.state_dict(),
                        "ttt/policy-%d.pkl" % i_episode)
 
-        if i_episode % 1 == 0: # batch_size
+        if i_episode % 1 == 0:  # batch_size
             optimizer.step()
             scheduler.step()
             optimizer.zero_grad()
@@ -319,7 +311,9 @@ def play_against_random(policy, env):
         won_num += status == Environment.STATUS_WIN
         lost_num += status == Environment.STATUS_LOSE
         tie_num += status == Environment.STATUS_TIE
-
+    print("wons: {}\tlosses: {}\tties:{}".format(
+        won_num, lost_num, tie_num
+    ))
     won_num /= 100.0
     lost_num /= 100.0
     tie_num /= 100.0
@@ -357,23 +351,17 @@ if __name__ == '__main__':
     # print(state)
     
     # part 5a plot training curve
-    if len(sys.argv) == 1:
-        train(policy, env)
-    else:
-        ep = int(sys.argv[1])
-        load_weights(policy, ep)
-        print(first_move_distr(policy, env))
-        print(play_against_random(policy, env))
-    
+    train(policy, env)
+
     # part 5b. Try with different sizes of hidden units.
-    #hidden_units = [32, 128, 256]
-    #for h in hidden_units:
-        #policy.__init__(input_size=27, hidden_size=h, output_size=9)
-        #if len(sys.argv) == 1:
-            #train(policy, env)
-        #else:
-            #ep = int(sys.argv[1])
-            #load_weights(policy, ep)
-            #print(first_move_distr(policy, env))
-            #print(play_games_against_random(policy, env))        
-    
+    # hidden_units = [16, 32, 128]
+    # for h in hidden_units:
+    #     env = Environment()
+    #     policy = Policy(hidden_size=h)
+    #     train(policy, env)
+    #     print(play_against_random(policy, env))
+
+    # part 5d
+    print(play_against_random(policy, env))
+
+

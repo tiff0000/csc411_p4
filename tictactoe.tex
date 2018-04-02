@@ -334,8 +334,9 @@
 		\end{homeworkProblem}
 
 		\begin{homeworkProblem}[Part 3b]
-			\noindent \textit{Explain why can we not update weights in the middle of an episode}
+			\noindent \textit{Explain why can we not update weights in the middle of an episode}\\
 			
+			When we are in the middle of the episode, we haven't yet finished computing the final result for reward. As a result, if we compute backward pass before we got the reward result, we could get inaccurate result, since if we compute the gradient based on inaccurate number. Therefore, we should update the weights after the episode.
 			
 		\end{homeworkProblem}
 
@@ -353,18 +354,19 @@
 			def get_reward(status):
 			"""Returns a numeric given an environment status."""
 			return {
-			Environment.STATUS_VALID_MOVE  : 1, 
-			Environment.STATUS_INVALID_MOVE: -5,
-			Environment.STATUS_WIN         : 10,
-			Environment.STATUS_TIE         : 4,
-			Environment.STATUS_LOSE        : -1
+			Environment.STATUS_VALID_MOVE: 1,
+			Environment.STATUS_INVALID_MOVE: -25,
+			Environment.STATUS_WIN: 50,
+			Environment.STATUS_TIE: 0,
+			Environment.STATUS_LOSE: -50
 			}[status]
 			\end{lstlisting}
 		\end{homeworkProblem}
 		
 		\begin{homeworkProblem}[Part 4(b)]
-			\noindent \textit{Explain the choices that you made in 4(a)}
+			\noindent \textit{Explain the choices that you made in 4(a)}\\
 			
+			The environments status were given weight based on the principle of rewarding biggest on win and penalize biggest on lose. In the same way, reward on status that contribute to valid moves and penalize on status that contribute to invalid moves. As a result, valid move is considered as a good move, and was given a positive number: 1. The invalid move is bad, so it should be penalized, and it was given: -25. The win status should be rewarded big, so it was given a big positive number: 50. The tie status is given 0 since it doesn't contribute to win or lose. Finally, the lose status was given  -50 to get penalized. 
 			
 		\end{homeworkProblem}
 	
@@ -420,12 +422,17 @@
 	   	\caption{training curve of the tictactoe model, with 32 hidden units}
 	   	\label{fig:randim}
 	   \end{figure*}	
-			
+		
+		After experimenting with 3 different number of hidden units : 16, 32, 128, it was possible to observe that the hyperparameter setting to 128 gave the best results. 
+		
 		\end{homeworkProblem}
 
 		\begin{homeworkProblem}[Part 5c]
 			
 		One of the first things that your policy should learn is to stop playing invalid moves. At around what episode did your agent learn that? State how you got the answer.
+		
+		The agent learned to stop playing invalid moves at around 4000th iteration. This can be observed by counting the number of invalid moves for 100 random games. By inspecting the result, starting at 3000th iteration, the number of invalid moves dramatically decreased 
+		from 126 invalid moves to only 27 invalid moves. 
 		
 			
 		\end{homeworkProblem}
@@ -456,7 +463,7 @@
 		
 		Graph of win/lose/tie rate changed throughout the training
 		\begin{figure*}[h!]
-			\includegraphics[scale=0.7]{part6old.png}
+			\includegraphics[scale=0.7]{part6.png}
 			\caption{win/lose/tie rate changed throughout the training}
 			\label{fig:randim}
 		\end{figure*}	
@@ -473,7 +480,9 @@
 	%----------------------------------------------------------------------------------------
 
 	\begin{homeworkProblem}[Part 7]
-
+	What has your model learned? 
+	
+	Does the distribution make sense?
 
 	\end{homeworkProblem}
 
@@ -483,8 +492,8 @@
 	%----------------------------------------------------------------------------------------
 
 	\begin{homeworkProblem}[Part 8]
-
-
+	Your learned policy should do fairly well against a random policy, but may not win consistently. What are some of the mistakes that your agent made?
+    
 	\end{homeworkProblem}
 	%----------------------------------------------------------------------------------------
 
