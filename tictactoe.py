@@ -329,7 +329,6 @@ def play_against_random(policy, env, part="", print_results=False):
         print("Results for playing 100 games against random")
         print("wins: {}\tlosses: {}\tties:{}".format(won_num, lost_num, tie_num))
 
-
     won_num /= 100.0
     lost_num /= 100.0
     tie_num /= 100.0
@@ -359,37 +358,37 @@ if __name__ == '__main__':
 
     policy = Policy()
     env = Environment()
+    if len(sys.argv) == 1:
+        # part 2
+        env.render()
+        # state = np.array([1,0,1,2,1,0,1,0,1])
+        # state = torch.from_numpy(state).long().unsqueeze(0)
+        # state = torch.zeros(3,9).scatter_(0, state, 1).view(1, 27)
+        # print(state)
 
-    # part 2
-    # env.render()
-    # state = np.array([1,0,1,2,1,0,1,0,1])
-    # state = torch.from_numpy(state).long().unsqueeze(0)
-    # state = torch.zeros(3,9).scatter_(0, state, 1).view(1, 27)
-    # print(state)
+        # part 5a plot training curve
+        # train(policy, env)
 
-    # part 5a plot training curve
-    # train(policy, env)
+        # part 5b. Try with different sizes of hidden units.
+        # hidden_units = [16, 32, 128]
+        # for h in hidden_units:
+        #     env = Environment()
+        #     policy = Policy(hidden_size=h)
+        #     train(policy, env, hidden_units=h)
+        #     print(play_against_random(policy, env))
 
-    # part 5b. Try with different sizes of hidden units.
-    # hidden_units = [16, 32, 128]
-    # for h in hidden_units:
-    #     env = Environment()
-    #     policy = Policy(hidden_size=h)
-    #     train(policy, env, hidden_units=h)
-    #     print(play_against_random(policy, env))
+        # part 5d
+        # train(policy, env)
+        # # play 100 games against random
+        # play_against_random(policy, env, print_results=True)
+        # for i in range(5):
+        #     print("Game " + str(i + 1))
+        #     print(play_against_random(policy, env, "part5d"))
+        #     print()
 
-    # part 5d
-    train(policy, env)
-    # play 100 games against random
-    play_against_random(policy, env, print_results=True)
-    for i in range(5):
-        print("Game " + str(i + 1))
-        print(play_against_random(policy, env, "part5d"))
-        print()
+        # part 6
+        # train(policy, env, part="part6")
 
-    # part 6
-    # train(policy, env, part="part6")
-
-
-
-
+    else:
+        # part 7
+        pass
