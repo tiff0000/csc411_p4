@@ -190,7 +190,7 @@ def get_reward(status):
     # }[status]
 
 
-def train(policy, env, gamma=0.9, log_interval=1000):
+def train(policy, env, gamma=0.9, log_interval=1000, part="part5", hidden_units=64):
     """Train policy gradient."""
     optimizer = optim.Adam(policy.parameters(), lr=0.001)
     scheduler = torch.optim.lr_scheduler.StepLR(
@@ -251,25 +251,27 @@ def train(policy, env, gamma=0.9, log_interval=1000):
             optimizer.zero_grad()
             
         if i_episode == 50000:
-            fig = plt.figure()
-            # plt.plot(episode, avg_return)
-            # plt.xlabel("Episodes")
-            # plt.ylabel("Average return")
-            # plt.title("Training curve of the tictactoe model")
-            # plt.savefig("part5b_hidden32.png")
-            # plt.savefig("part5b_hidden128.png")
-            # plt.savefig("part5b_hidden16.png")
+            if part == "part5":
+                fig = plt.figure()
+                plt.plot(episode, avg_return)
+                plt.xlabel("Episodes")
+                plt.ylabel("Average return")
+                plt.title("Training curve of the tictactoe model")
+                plt.savefig("part5b_hidden" + str(hidden_units) + ".png")
+                # plt.savefig("part5b_hidden128.png")
+                # plt.savefig("part5b_hidden16.png")
 
             # part 6
-            # plt.figure()
-            plt.plot(episode, win_rates, label="Win rate")
-            plt.plot(episode, loss_rates, label="Loss rate")
-            plt.plot(episode, tie_rates, label="Tie rate")
-            plt.xlabel("Episodes")
-            plt.ylabel("Win/lose/tie rates")
-            plt.title("Changes of win/lose/tie rates throughout the training")
-            plt.legend()
-            plt.savefig("part6.1.png")
+            if part == "part6":
+                fig = plt.figure()
+                plt.plot(episode, win_rates, label="Win rate")
+                plt.plot(episode, loss_rates, label="Loss rate")
+                plt.plot(episode, tie_rates, label="Tie rate")
+                plt.xlabel("Episodes")
+                plt.ylabel("Win/lose/tie rates")
+                plt.title("Changes of win/lose/tie rates throughout the training")
+                plt.legend()
+                plt.savefig("part6.1.png")
 
         if i_episode > 50000:
             return 0
@@ -311,6 +313,7 @@ def play_against_random(policy, env):
         won_num += status == Environment.STATUS_WIN
         lost_num += status == Environment.STATUS_LOSE
         tie_num += status == Environment.STATUS_TIE
+
     print("wons: {}\tlosses: {}\tties:{}".format(
         won_num, lost_num, tie_num
     ))
@@ -320,6 +323,26 @@ def play_against_random(policy, env):
 
     return won_num, lost_num, tie_num
 
+# def display_five_games_against_random(policy, env):
+#     won_num = 0
+#     lost_num = 0
+#     tie_num = 0
+#
+#     num_games = 100
+#     for i in range(num_games):
+#         state = env.reset()
+#         done = False
+#         while not done:
+#             action, probability = select_action(policy, state)
+#             state, status, done = env.play_against_random(action)
+#
+#         won_num += status == Environment.STATUS_WIN
+#         lost_num += status == Environment.STATUS_LOSE
+#         tie_num += status == Environment.STATUS_TIE
+#
+#     print("wons: {}\tlosses: {}\tties:{}".format(
+#         won_num, lost_num, tie_num
+#     ))
 
 def get_invalid_moves(policy, env):
     """
@@ -351,17 +374,22 @@ if __name__ == '__main__':
     # print(state)
     
     # part 5a plot training curve
-    train(policy, env)
+    # train(policy, env)
 
     # part 5b. Try with different sizes of hidden units.
     # hidden_units = [16, 32, 128]
     # for h in hidden_units:
     #     env = Environment()
     #     policy = Policy(hidden_size=h)
-    #     train(policy, env)
+    #     train(policy, env, hidden_units=h)
     #     print(play_against_random(policy, env))
 
     # part 5d
-    print(play_against_random(policy, env))
+    # print(play_against_random(policy, env))
+
+    # part 6
+    # train(policy, env, part="part6")
+
+
 
 
