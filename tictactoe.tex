@@ -447,101 +447,84 @@
 		
 			Results for playing 100 games against random
 			
-			wins: 92        losses: 4       ties:4
+			wins: 96        losses: 3       ties:1
 			
 			Display five games that your trained agent plays against the random policy. 
 			\begin{lstlisting}[language=Python, caption=modified function]
 			Game 1
-			..o
 			...
 			.x.
+			o..
 			====
 			..o
+			.xx
 			o..
-			xx.
 			====
 			..o
-			o..
 			xxx
+			o..
 			====
 			wins: 1 losses: 0       ties:0
-			(0.01, 0.0, 0.0)
 			
 			Game 2
 			...
+			.xo
+			...
+			====
 			...
 			.xo
+			xo.
 			====
-			.o.
-			.x.
+			..x
 			.xo
-			====
-			.o.
-			.xo
-			xxo
-			====
-			.ox
-			.xo
-			xxo
+			xo.
 			====
 			wins: 1 losses: 0       ties:0
-			(0.01, 0.0, 0.0)
 			
 			Game 3
 			..o
-			...
 			.x.
-			====
-			o.o
 			...
-			xx.
 			====
-			o.o
-			...
+			..o
+			.xx
+			o..
+			====
+			..o
 			xxx
+			o..
 			====
 			wins: 1 losses: 0       ties:0
-			(0.01, 0.0, 0.0)
 			
 			Game 4
 			...
+			.x.
+			..o
+			====
 			.o.
 			.x.
+			x.o
 			====
-			...
-			.o.
-			oxx
-			====
-			xo.
-			.o.
-			oxx
-			====
-			xox
-			.oo
-			oxx
-			====
-			xox
-			xoo
-			oxx
-			====
-			wins: 0 losses: 0       ties:1
-			(0.0, 0.0, 0.01)
-			
-			Game 5
-			...
-			..o
+			.ox
 			.x.
-			====
-			o..
-			..o
-			xx.
-			====
-			o..
-			..o
-			xxx
+			x.o
 			====
 			wins: 1 losses: 0       ties:0
-			(0.01, 0.0, 0.0)
+			
+			Game 5
+			.o.
+			.x.
+			...
+			====
+			.o.
+			.x.
+			xo.
+			====
+			.ox
+			.x.
+			xo.
+			====
+			wins: 1 losses: 0       ties:0
 			\end{lstlisting}
 			
 			Explain any strategies that you think your agent has learned.\\	
@@ -566,6 +549,7 @@
 			
 			.  . .
 			
+			Finally, it always starts by picking the middle of the board, and this might be a learned strategy to more easily win the game.
 			
 			
 		\end{homeworkProblem}
@@ -587,8 +571,8 @@
 			\label{fig:randim}
 		\end{figure*}	
 		
-		From the graph, we can see that the  win rate improved from around 63\% to around 94\%. Meanwhile, the lose rate and tie rate decreased from around 20\% to 5\%. This shows that the agents has learned to make moves that rewards it for winning the game.
-				
+		From the graph, we can see that the  win rate improved from around 62\% to around 81\%. Meanwhile, the lose rate and tie rate decreased from around 23\% to 15\%., 13\% to 5\% respectively. This shows that the agents has learned to make moves that rewards it for winning the game. 
+		
 		\end{homeworkProblem}
 
 

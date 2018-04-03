@@ -12,7 +12,6 @@ import torch.distributions
 from torch.autograd import Variable
 import matplotlib.pyplot as plt
 
-
 class Environment(object):
     """
     The Tic-Tac-Toe Environment
@@ -82,6 +81,7 @@ class Environment(object):
 
     def random_step(self):
         """Choose a random, unoccupied move on the board to play."""
+        # random.seed(5)  # random flag
         pos = [i for i in range(9) if self.grid[i] == 0]
         move = random.choice(pos)
         return self.step(move)
@@ -108,12 +108,10 @@ class Policy(nn.Module):
 
     def __init__(self, input_size=27, hidden_size=32, output_size=9):
         super(Policy, self).__init__()
-        # TODO
         self.linear_f1 = nn.Linear(input_size, hidden_size)
         self.linear_f2 = nn.Linear(hidden_size, output_size)
 
     def forward(self, x):
-        # TODO
         h = F.relu(self.linear_f1(x))
         out = F.softmax(self.linear_f2(h))
         return out
@@ -175,22 +173,14 @@ def finish_episode(saved_rewards, saved_logprobs, gamma=1.0):
 
 def get_reward(status):
     """Returns a numeric given an environment status."""
-    return {
-        Environment.STATUS_VALID_MOVE: 5,
-        Environment.STATUS_INVALID_MOVE: -50,
-        Environment.STATUS_WIN: 100,
-        Environment.STATUS_TIE: -10,
-        Environment.STATUS_LOSE: -100
-    }[status]
 
-    # part6.1
-    # return {
-    #     Environment.STATUS_VALID_MOVE: 1,
-    #     Environment.STATUS_INVALID_MOVE: -25,
-    #     Environment.STATUS_WIN: 50,
-    #     Environment.STATUS_TIE: 0,
-    #     Environment.STATUS_LOSE: -2
-    # }[status]
+    return {
+        Environment.STATUS_VALID_MOVE: 1,
+        Environment.STATUS_INVALID_MOVE: -25,
+        Environment.STATUS_WIN: 50,
+        Environment.STATUS_TIE: 0,
+        Environment.STATUS_LOSE: -50
+    }[status]
 
 
 def train(policy, env, gamma=0.9, log_interval=1000, part="part5", hidden_units=64):
@@ -300,7 +290,6 @@ def play_against_random(policy, env, part="", print_results=False):
     """
     Play 100 games against random and return the rate of wins, losses and ties of the agent.
     """
-
     won_num = 0
     lost_num = 0
     tie_num = 0
@@ -356,11 +345,16 @@ def get_invalid_moves(policy, env):
 if __name__ == '__main__':
     import sys
 
+    np.random.seed(20)
+    random.seed(20)
+    torch.manual_seed(20)
+
     policy = Policy()
     env = Environment()
+
     if len(sys.argv) == 1:
         # part 2
-        env.render()
+        # env.render()
         # state = np.array([1,0,1,2,1,0,1,0,1])
         # state = torch.from_numpy(state).long().unsqueeze(0)
         # state = torch.zeros(3,9).scatter_(0, state, 1).view(1, 27)
@@ -387,7 +381,7 @@ if __name__ == '__main__':
         #     print()
 
         # part 6
-        # train(policy, env, part="part6")
+        train(policy, env, part="part6")  # saved into figure 6.1.png for testing
 
     else:
         # part 7
