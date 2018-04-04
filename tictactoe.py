@@ -106,7 +106,7 @@ class Policy(nn.Module):
     The Tic-Tac-Toe Policy
     """
 
-    def __init__(self, input_size=27, hidden_size=32, output_size=9):
+    def __init__(self, input_size=27, hidden_size=64, output_size=9):
         super(Policy, self).__init__()
         self.linear_f1 = nn.Linear(input_size, hidden_size)
         self.linear_f2 = nn.Linear(hidden_size, output_size)
@@ -183,7 +183,7 @@ def get_reward(status):
     }[status]
 
 
-def train(policy, env, gamma=0.9, log_interval=1000, part="part5", hidden_units=64):
+def train(policy, env, gamma=0.9, log_interval=1000, part="part5a", hidden_units=64):
     """Train policy gradient."""
     optimizer = optim.Adam(policy.parameters(), lr=0.001)
     scheduler = torch.optim.lr_scheduler.StepLR(
@@ -244,15 +244,21 @@ def train(policy, env, gamma=0.9, log_interval=1000, part="part5", hidden_units=
             optimizer.zero_grad()
 
         if i_episode == 50000:
-            if part == "part5":
+            if part == "part5a":
+                fig = plt.figure()
+                plt.plot(episode, avg_return)
+                plt.xlabel("Episodes")
+                plt.ylabel("Average return")
+                plt.title("Training curve of the tictactoe model")
+                plt.savefig("part5a_hidden64.png")
+
+            if part == "part5b":
                 fig = plt.figure()
                 plt.plot(episode, avg_return)
                 plt.xlabel("Episodes")
                 plt.ylabel("Average return")
                 plt.title("Training curve of the tictactoe model")
                 plt.savefig("part5b_hidden" + str(hidden_units) + ".png")
-                # plt.savefig("part5b_hidden128.png")
-                # plt.savefig("part5b_hidden16.png")
 
             # part 6
             if part == "part6":
@@ -342,6 +348,29 @@ def get_invalid_moves(policy, env):
     return invalid
 
 
+def plot_distribution(iteration, distr_moves):
+    for i in range(len(distr_moves)):
+        plt.clf()
+        plt.cla()
+        plt.plot(iteration, distr_moves[i])
+        plt.ylabel("Probability")
+        plt.xlabel("Episodes")
+        plt.title("Performance throughout episodes for cell " + str(i + 1))
+        plt.savefig("part7_distribution_{}.png".format(i + 1))
+
+def get_distribution():
+    # policy = Policy(hidden_size=128)
+    iteration, distr_moves = [], []
+    for i in range(9):
+        distr_moves.append([])
+    for ep in range(2000, 50000, 1000):
+        load_weights(policy, ep)
+        move_distr = np.array(first_move_distr(policy, env))[0]
+        for i in range(len(move_distr)):
+            distr_moves[i].append(move_distr[i])
+        iteration.append(ep)
+    plot_distribution(iteration, distr_moves)
+
 if __name__ == '__main__':
     import sys
 
@@ -354,7 +383,7 @@ if __name__ == '__main__':
 
     if len(sys.argv) == 1:
         # part 2
-        # env.render()
+        env.render()
         # state = np.array([1,0,1,2,1,0,1,0,1])
         # state = torch.from_numpy(state).long().unsqueeze(0)
         # state = torch.zeros(3,9).scatter_(0, state, 1).view(1, 27)
@@ -364,25 +393,26 @@ if __name__ == '__main__':
         # train(policy, env)
 
         # part 5b. Try with different sizes of hidden units.
-        # hidden_units = [16, 32, 128]
-        # for h in hidden_units:
-        #     env = Environment()
-        #     policy = Policy(hidden_size=h)
-        #     train(policy, env, hidden_units=h)
-        #     print(play_against_random(policy, env))
+        hidden_units = [128]
+        for h in hidden_units:
+            env = Environment()
+            policy = Policy(hidden_size=h)
+            train(policy, env, part="part5b", hidden_units=h)
+            print(play_against_random(policy, env))
 
         # part 5d
         # train(policy, env)
         # # play 100 games against random
-        # play_against_random(policy, env, print_results=True)
+        # play_against_random(policy, env, part="part5b" print_results=True)
         # for i in range(5):
         #     print("Game " + str(i + 1))
         #     print(play_against_random(policy, env, "part5d"))
         #     print()
 
         # part 6
-        train(policy, env, part="part6")  # saved into figure 6.1.png for testing
+        # train(policy, env, part="part6")  # saved into figure 6.1.png for testing
 
     else:
         # part 7
-        pass
+        get_distribution()
+

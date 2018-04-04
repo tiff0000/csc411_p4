@@ -402,13 +402,13 @@
 			
 			Plot the training curve of the tictactoe model, by tuning the hyperparameter hidden units with 3 different values.
 			
-			1. Hidden units = 128 units
+		1. Hidden units = 128 units
 			
 			\begin{figure*}[h!]
 				\includegraphics[scale=0.7]{part5b_hidden128.png}
 				\caption{training curve of the tictactoe model, with 128 hidden units}
 				\label{fig:randim}
-			\end{figure*}	
+			\end{figure*}
 		
 		2. Hidden units = 16 units
 		
@@ -582,11 +582,54 @@
 	%----------------------------------------------------------------------------------------
 	%	PROBLEM 7
 	%----------------------------------------------------------------------------------------
-
-	\begin{homeworkProblem}[Part 7]
-	What has your model learned? 
 	
-	Does the distribution make sense?
+	 
+	\begin{homeworkProblem}[Part 7]
+		
+		From the graphs, it is possible to observe that the probabilities for making first moves in cells 1, 2, 4, 5 were higher. As the model is trained more and more and the agent learned to win, the probabilities were higher for cells 3, 7 and 9, which makes sense. From the game play in part 6, it was observed that the agent always make the first move in the cell 5, and this is shown in the distribution where cell 5 got the highest probability compared to 1, 2 and 4. As a result, the model makes sense. 
+		
+		
+		
+	\begin{figure*}[!h]
+		\begin{subfigure}{.35\textwidth}
+			\includegraphics[width=1\linewidth]{part7_distribution_1.png}
+			\caption{Cell 1}
+		\end{subfigure}
+		\begin{subfigure}{.35\textwidth}
+			\includegraphics[width=1\linewidth]{part7_distribution_2.png}
+			\caption{Cell 2}
+		\end{subfigure}
+		\begin{subfigure}{.35\textwidth}
+			\includegraphics[width=1\linewidth]{part7_distribution_3.png}
+			\caption{Cell 3}%
+		\end{subfigure}
+		\begin{subfigure}{.35\textwidth}
+			\includegraphics[width=1\linewidth]{part7_distribution_4.png}
+			\caption{Cell 4}
+		\end{subfigure}
+		\begin{subfigure}{.35\textwidth}
+			\includegraphics[width=1\linewidth]{part7_distribution_5.png}
+			\caption{Cell 5}%
+		\end{subfigure}
+		\begin{subfigure}{.35\textwidth}
+			\includegraphics[width=1\linewidth]{part7_distribution_6.png}
+			\caption{Cell 6}%
+		\end{subfigure}
+		\begin{subfigure}{.35\textwidth}
+			\includegraphics[width=1\linewidth]{part7_distribution_7.png}
+			\caption{Cell 7}
+		\end{subfigure}
+		\begin{subfigure}{.35\textwidth}
+			\includegraphics[width=1\linewidth]{part7_distribution_8.png}
+			\caption{Cell 8}
+		\end{subfigure}
+		\begin{subfigure}{.35\textwidth}
+			\includegraphics[width=1\linewidth]{part7_distribution_9.png}
+			\caption{Cell 9}
+		\end{subfigure}
+		\caption{Display the weights}
+		\label{Display the weights}
+	\end{figure*}
 	
 	\end{homeworkProblem}
 
