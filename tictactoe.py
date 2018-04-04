@@ -393,7 +393,7 @@ if __name__ == '__main__':
         # train(policy, env)
 
         # part 5b. Try with different sizes of hidden units.
-        hidden_units = [128]
+        hidden_units = [16, 32, 128]
         for h in hidden_units:
             env = Environment()
             policy = Policy(hidden_size=h)

@@ -401,16 +401,8 @@
 		\begin{homeworkProblem}[Part 5b]
 			
 			Plot the training curve of the tictactoe model, by tuning the hyperparameter hidden units with 3 different values.
-			
-		1. Hidden units = 128 units
-			
-			\begin{figure*}[h!]
-				\includegraphics[scale=0.7]{part5b_hidden128.png}
-				\caption{training curve of the tictactoe model, with 128 hidden units}
-				\label{fig:randim}
-			\end{figure*}
 		
-		2. Hidden units = 16 units
+		1. Hidden units = 16 units
 		
 		\begin{figure*}[h!]
 			\includegraphics[scale=0.7]{part5b_hidden16.png}
@@ -418,7 +410,7 @@
 			\label{fig:randim}
 		\end{figure*}	
 	
-	   3. Hidden units = 32 units
+	   2. Hidden units = 32 units
 	   
 	   \begin{figure*}[h!]
 	   	\includegraphics[scale=0.7]{part5b_hidden32.png}
@@ -426,7 +418,23 @@
 	   	\label{fig:randim}
 	   \end{figure*}	
 		
-		After experimenting with 3 different number of hidden units : 16, 32, 128, it was possible to observe that the hyperparameter setting to 128 gave the best results. 
+		3. Hidden units = 128 units
+		
+		\begin{figure*}[h!]
+			\includegraphics[scale=0.7]{part5b_hidden128.png}
+			\caption{training curve of the tictactoe model, with 128 hidden units}
+			\label{fig:randim}
+		\end{figure*}
+		
+			4. Hidden units = 256 units
+			
+			\begin{figure*}[h!]
+				\includegraphics[scale=0.7]{part5b_hidden256.png}
+				\caption{training curve of the tictactoe model, with 256 hidden units}
+				\label{fig:randim}
+			\end{figure*}
+		
+		After experimenting with 3 different number of hidden units : 16, 32, 128 and 256, it was possible to observe that the hyperparameter setting to 256s gave the best results. For hidden units 16 and 32, the average return was below 40, for 128, the average return was varying in the 40s and for 256, the average return almost reached 50.
 		
 		\end{homeworkProblem}
 
@@ -437,7 +445,6 @@
 		The agent learned to stop playing invalid moves at around 4000th iteration. This can be observed by counting the number of invalid moves for 100 random games. By inspecting the result, starting at 3000th iteration, the number of invalid moves dramatically decreased 
 		from 126 invalid moves to only 27 invalid moves. 
 		
-			
 		\end{homeworkProblem}
 	
 		\begin{homeworkProblem}[Part 5d]
